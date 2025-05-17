@@ -1,0 +1,64 @@
+server:
+  port: 8080  # 指定 Spring Boot 应用程序启动时的服务器端口号
+
+mybatis:
+  mapper-locations: classpath:mappers/*xml  # 指定 MyBatis 的 Mapper XML 文件所在路径为 yaml 文件所在路径下的 mappers 文件夹
+  type-aliases-package: com.ymj.addresslist.mybatis.entity  # 指定 MyBatis 的类型别名所在的包路径
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+spring:
+  #database
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://vcl.mingjia.tech:3307/campus-canvas
+    username: ymj
+    password: ymj20040312
+    hikari:
+      max-lifetime: 35000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 30000
+  #QQ Mail
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: 1062415694@qq.com
+    password: mxteibwfeatebejf
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  #Redis
+  redis:
+    host: vcl.mingjia.tech
+    port: 6379
+    password:
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        min-idle: 0
+        max-idle: 8
+  #Spring Cache
+  cache:
+    type: redis  # 指定使用 Redis 作为缓存
+    redis:
+      time-to-live: 600000  # 缓存默认过期时间（毫秒），与 JWT 过期时间一致
+      key-prefix: "cache:"   # 缓存键前缀（可选，用于区分不同服务）
+      use-key-prefix: true   # 启用前缀（避免键冲突）
+      cache-null-values: false  # 不缓存空值（防止缓存穿透）
+  # json
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+# jwt
+jwt:
+  secret: 5oiR5piv57uD5Lmg5pe26ZW/5Lik5bm05Y2K55qE5Liq5Lq657uD5Lmg55Sf
+  expiration: 600000

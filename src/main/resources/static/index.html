@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="杨明佳的个人主页">
+    <title>杨明佳 | 网络工程专业</title>
+    <!-- 轻量级CSS框架 (仅3.8KB gzip) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+          integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0ik9vTxJ+YhoHJKvJHhn/qQec"
+          crossorigin="anonymous">
+    <!-- 本地样式 -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #42b983;
+            --text-color: #34495e;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: var(--primary-color);
+            padding: 2rem 1rem;
+            color: white;
+            text-align: center;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 1rem 0;
+            padding: 2rem;
+            transition: transform 0.2s;
+        }
+
+        .section-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .skill-badge {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin: 0.3rem;
+        }
+
+        .project-item {
+            border-left: 3px solid var(--secondary-color);
+            padding-left: 1rem;
+            margin: 1rem 0;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .contact-links a:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <h1>杨明佳</h1>
+    <p>北京邮电大学 · 计算机学院 · 2022级本科生</p>
+</header>
+
+<main class="main-content">
+    <div class="grid-container">
+        <!-- 个人信息 -->
+        <section class="section-card">
+            <h2>🎓 个人信息</h2>
+            <div class="pure-g">
+                <div class="pure-u-1-3"><strong>专业</strong></div>
+                <div class="pure-u-2-3">网络工程（排名 5/47）</div>
+
+                <div class="pure-u-1-3"><strong>GPA</strong></div>
+                <div class="pure-u-2-3">3.73/4.0</div>
+
+                <div class="pure-u-1-3"><strong>研究方向</strong></div>
+                <div class="pure-u-2-3">沉浸式媒体编码与传输</div>
+
+            </div>
+        </section>
+
+        <!-- 技术能力 -->
+        <section class="section-card">
+            <h2>🛠 技术栈</h2>
+            <div class="skill-badge">C++ 网络编程</div>
+            <div class="skill-badge">Java 后端开发</div>
+            <div class="skill-badge">分布式系统设计</div>
+            <div class="skill-badge">Docker</div>
+            <div class="skill-badge">MySQL</div>
+        </section>
+
+        <!-- 项目经验 -->
+        <section class="section-card">
+            <h2>🚀 项目经历</h2>
+            <div class="project-item">
+                <h3>“灵镜播”体积视频直播系统（2024）</h3>
+                <p>（1）高质量低冗余立体视频实时采集：使用Azure Kinect实时地重建采集对象的三维点云表示，消除点云中多相机同步采集带来的冗余信息。</p>
+                <p>（2）低延迟立体视频高效编解码：针对基于视频的点云编码技术路线（如 V-PCC），降低三维数据映射到二维平面的延迟；在映射过程中保留三维空间邻近性，增加平面视频空间冗余，提高编码效率。</p>
+            </div>
+            <div class="project-item">
+                <h3>漫游北大（2025）</h3>
+                <p>在北京大学国家重点研发项目“沉浸式文旅”中主导《漫游北大》子课题，拍摄并制作了北大校园的沉浸式素材，通过3DGS重建了部分文物与场景，并基于unity引擎在CAVE系统中实现了异形屏的全景视频播放功能</p>
+            </div>
+        </section>
+
+        <!-- 获奖经历 -->
+        <section class="section-card">
+            <h2>🏆 获奖经历</h2>
+            <ul>
+                <li>国家励志奖学金（2024）</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 联系方式 -->
+    <section class="section-card">
+        <h2>📬 联系方式</h2>
+        <div class="contact-links">
+            <a href="yangmingjia@bupt.edu.cn">📧 Email</a>
+            <a href="https://github.com/greed-106" target="_blank">🐱 GitHub</a>
+        </div>
+    </section>
+</main>
+
+<footer class="header" style="margin-top: 2rem;">
+    <p>© 2024 杨明佳</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,80 @@
+package com.ymj.campuscanvas.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.ymj.campuscanvas.pojo.DTO.GetPostResponse;
+import com.ymj.campuscanvas.pojo.DTO.UploadPostRequest;
+import com.ymj.campuscanvas.pojo.DTO.UploadPostResponse;
+import com.ymj.campuscanvas.pojo.DTO.UserBriefResponse;
+import com.ymj.campuscanvas.pojo.Post;
+import com.ymj.campuscanvas.pojo.Result;
+import com.ymj.campuscanvas.service.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+
+@RestController
+@Slf4j
+@CrossOrigin
+@RequestMapping("/campus-canvas/api/posts")
+public class PostController {
+    @Autowired
+    PostService postService;
+    @Autowired
+    TagService tagService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    PostCompositeService postCompositeService;
+    @Autowired
+    UserCompositeService userCompositeService;
+
+    @PostMapping
+    public Result uploadPost(@RequestBody UploadPostRequest request) {
+        log.info("request: {}", request);
+        userService.checkUserIdExist(request.getUserId());
+        tagService.checkTagExist(request.getTagIds());
+        Post post = request.toPost();
+        postService.insertPost(post, request.getTagIds());
+
+        return Result.success(new UploadPostResponse(post.getId()));
+    }
+
+    @GetMapping("/{postId}")
+    public Result getPostByPostId(@PathVariable Long postId) {
+        GetPostResponse post = postCompositeService.selectPostByPostId(postId);
+        return Result.success(post);
+    }
+
+    @GetMapping("/hot")
+    public Result getHotPosts(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "7") int days
+    ) {
+        PageInfo<GetPostResponse> posts = postCompositeService.selectHotPosts(pageNum, pageSize, days);
+        return Result.success(posts);
+    }
+
+    @GetMapping
+    public Result getPostsByKeyword(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortOrder
+    ) {
+        PageInfo<GetPostResponse> posts = postCompositeService.selectPostsByKeyword(keyword, pageNum, pageSize, sortBy, sortOrder);
+        return Result.success(posts);
+    }
+
+    @GetMapping("/{postId}/liked-users")
+    public Result getUserBriefsByLikedPostId(
+            @PathVariable Long postId,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        PageInfo<UserBriefResponse> userBriefs = userCompositeService.selectUserBriefsByLikedPostId(postId, pageNum, pageSize);
+        return Result.success(userBriefs);
+    }
+}

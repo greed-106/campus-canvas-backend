@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ymj.campuscanvas.mapper.TagMapper">
+    <select id="selectExistingTagIds" resultType="long">
+        SELECT id FROM tag
+        <where>
+            <if test="tagIds != null and !tagIds.isEmpty()">
+                id IN
+                <foreach item="id" collection="tagIds" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="tagIds == null or tagIds.isEmpty()">
+                1=0
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ymj.campuscanvas.mapper.TopicMapper">
+    <insert id="insertTopic">
+        INSERT INTO topic (post_id, tag_id)
+        VALUES
+        <foreach collection="tagIds" item="tagId" separator=",">
+            (#{postId}, #{tagId})
+        </foreach>
+    </insert>
+
+    <select id="selectPostsByTagId" resultType="com.ymj.campuscanvas.pojo.Post">
+        SELECT p.*
+        FROM post p
+        JOIN topic t ON p.id = t.post_id
+        WHERE t.tag_id = #{tagId}
+    </select>
+
+</mapper>
