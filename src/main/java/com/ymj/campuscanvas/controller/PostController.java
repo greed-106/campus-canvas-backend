@@ -7,10 +7,13 @@ import com.ymj.campuscanvas.pojo.DTO.UploadPostResponse;
 import com.ymj.campuscanvas.pojo.DTO.UserBriefResponse;
 import com.ymj.campuscanvas.pojo.Post;
 import com.ymj.campuscanvas.pojo.Result;
+import com.ymj.campuscanvas.pojo.Tag;
 import com.ymj.campuscanvas.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -24,6 +27,8 @@ public class PostController {
     TagService tagService;
     @Autowired
     UserService userService;
+    @Autowired
+    TopicService topicService;
     @Autowired
     PostCompositeService postCompositeService;
     @Autowired
@@ -44,6 +49,12 @@ public class PostController {
     public Result getPostByPostId(@PathVariable Long postId) {
         GetPostResponse post = postCompositeService.selectPostByPostId(postId);
         return Result.success(post);
+    }
+
+    @GetMapping("/{postId}/tags")
+    public Result getTagsByPostId(@PathVariable Long postId) {
+        List<Tag> tags = topicService.selectTagsByPostId(postId);
+        return Result.success(tags);
     }
 
     @GetMapping("/hot")
