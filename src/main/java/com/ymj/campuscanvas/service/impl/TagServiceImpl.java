@@ -21,15 +21,18 @@ public class TagServiceImpl implements TagService {
     TagMapper tagMapper;
 
     @Override
-    public void insertTag(String tagName) {
+    public void insertTag(Tag tag) {
         // 直接插入，如果已经存在则不插入
         try {
-            Tag tag = new Tag();
-            tag.setName(tagName);
             tagMapper.insertTag(tag);
         } catch (DuplicateKeyException e) {
             // ignore
-            log.info("Tag already exists: {}", tagName);
+            log.info("Tag already exists: {}", tag.getName());
+            Tag duplicationTag = tagMapper.selectTagByTagName(tag.getName());
+            tag.setId(duplicationTag.getId());
+            tag.setName(duplicationTag.getName());
+            tag.setViewCount(duplicationTag.getViewCount());
+            tag.setCreatedTime(duplicationTag.getCreatedTime());
         }
     }
 

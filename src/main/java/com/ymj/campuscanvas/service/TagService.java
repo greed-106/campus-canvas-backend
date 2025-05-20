@@ -6,7 +6,7 @@ import com.ymj.campuscanvas.pojo.Tag;
 import java.util.List;
 
 public interface TagService {
-    void insertTag(String tagName);
+    void insertTag(Tag tag);
     PageInfo<Tag> selectTagsByKeyword(String tagName, int pageNum, int pageSize);
     void updateTagViewCount(Long tagId, int increment);
 

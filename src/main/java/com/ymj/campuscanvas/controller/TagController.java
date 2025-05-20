@@ -3,6 +3,7 @@ package com.ymj.campuscanvas.controller;
 import com.github.pagehelper.PageInfo;
 import com.ymj.campuscanvas.pojo.DTO.GetPostResponse;
 import com.ymj.campuscanvas.pojo.Result;
+import com.ymj.campuscanvas.pojo.Tag;
 import com.ymj.campuscanvas.service.PostCompositeService;
 import com.ymj.campuscanvas.service.TagService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,5 +30,11 @@ public class TagController {
     ) {
         PageInfo<GetPostResponse> posts = postCompositeService.selectPostsByTagId(tagId, pageNum, pageSize, sortBy, sortOrder);
         return Result.success(posts);
+    }
+
+    @PostMapping
+    public Result uploadTag(@RequestBody Tag tag) {
+        tagService.insertTag(tag);
+        return Result.success(tag);
     }
 }
