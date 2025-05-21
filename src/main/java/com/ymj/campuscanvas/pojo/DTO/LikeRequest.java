@@ -3,6 +3,7 @@ package com.ymj.campuscanvas.pojo.DTO;
 import com.ymj.campuscanvas.pojo.Like;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -12,7 +13,7 @@ public class LikeRequest {
     private Long userId;
     private Long targetId;
     private String type; // "POST" or "COMMENT"
-    private boolean isLike; // true for like, false for unlike
+    private boolean like; // true for like, false for unlike
 
     public boolean isPost() {
         return "POST".equalsIgnoreCase(type);
@@ -20,10 +21,6 @@ public class LikeRequest {
 
     public boolean isComment() {
         return "COMMENT".equalsIgnoreCase(type);
-    }
-
-    public boolean isLike() {
-        return isLike;
     }
 
     public Like toLike() {
