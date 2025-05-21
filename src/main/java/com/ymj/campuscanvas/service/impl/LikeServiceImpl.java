@@ -9,6 +9,7 @@ import com.ymj.campuscanvas.service.LikeService;
 import com.ymj.campuscanvas.utils.SortValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,13 +25,41 @@ public class LikeServiceImpl implements LikeService {
 
 
     @Override
-    public void insertLike(LikeRequest likeRequest) {
-        likeMapper.insertLike(likeRequest.toLike());
+    public void handleLikeRequest(LikeRequest likeRequest) {
+        if(!likeRequest.isComment() && !likeRequest.isPost()) {
+            throw new IllegalArgumentException("Invalid like request");
+        }
+        log.info("Handling like request: {}", likeRequest);
+
+        if(likeRequest.isPost()){
+            if(likeRequest.isLike()){
+                insertPostLike(likeRequest.toLike());
+            }else{
+                deletePostLike(likeRequest.toLike());
+            }
+        }else{
+            throw new IllegalArgumentException("Comment like is not supported yet");
+        }
     }
 
     @Override
-    public void deleteLike(LikeRequest likeRequest) {
-        likeMapper.deleteLike(likeRequest.toLike());
+    public void insertPostLike(Like like) {
+        try {
+            likeMapper.insertPostLike(like);
+        } catch (DuplicateKeyException e) {
+            throw new IllegalArgumentException("Cannot like the same post multiple times");
+        } catch (Exception e) {
+            log.error("Error inserting like: {}", e.getMessage());
+            throw new RuntimeException("Error inserting like");
+        }
+    }
+
+    @Override
+    public void deletePostLike(Like like) {
+        int affectedRows = likeMapper.deleteLike(like);
+        if (affectedRows == 0) {
+            throw new IllegalArgumentException("Unable to delete like, like not found");
+        }
     }
 
     @Override
@@ -40,7 +69,11 @@ public class LikeServiceImpl implements LikeService {
         }
 
         Like.LikeType likeType = Like.LikeType.valueOf(type.toUpperCase());
-        return likeMapper.countLikesByPostId(targetId);
+        if(likeType == Like.LikeType.POST) {
+            return likeMapper.countPostLikesByPostId(targetId);
+        } else {
+            throw new IllegalArgumentException("Comment like count is not supported yet");
+        }
     }
 
     private Page<Long> convertLikesToIdsWithPage(Page<Like> likes, Function<Like, Long> idExtractor) {

@@ -30,6 +30,8 @@ public class PostController {
     @Autowired
     TopicService topicService;
     @Autowired
+    LikeService likeService;
+    @Autowired
     PostCompositeService postCompositeService;
     @Autowired
     UserCompositeService userCompositeService;
@@ -87,5 +89,12 @@ public class PostController {
     ) {
         PageInfo<UserBriefResponse> userBriefs = userCompositeService.selectUserBriefsByLikedPostId(postId, pageNum, pageSize);
         return Result.success(userBriefs);
+    }
+    @GetMapping("/{postId}/liked-count")
+    public Result getPostLikeCounts(
+            @PathVariable Long postId
+    ) {
+        int likeCount = likeService.countLikesByTargetId(postId, "POST");
+        return Result.success(likeCount);
     }
 }
