@@ -41,7 +41,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         // 开发使用
         if(token.equals("pku")){
-            log.info("看到pku✌直接跪了");
+//            log.info("看到pku✌直接跪了");
             return true;
         }
 
