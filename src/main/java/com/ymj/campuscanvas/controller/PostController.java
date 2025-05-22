@@ -1,10 +1,7 @@
 package com.ymj.campuscanvas.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.ymj.campuscanvas.pojo.DTO.GetPostResponse;
-import com.ymj.campuscanvas.pojo.DTO.UploadPostRequest;
-import com.ymj.campuscanvas.pojo.DTO.UploadPostResponse;
-import com.ymj.campuscanvas.pojo.DTO.UserBriefResponse;
+import com.ymj.campuscanvas.pojo.DTO.*;
 import com.ymj.campuscanvas.pojo.Post;
 import com.ymj.campuscanvas.pojo.Result;
 import com.ymj.campuscanvas.pojo.Tag;
@@ -35,6 +32,8 @@ public class PostController {
     PostCompositeService postCompositeService;
     @Autowired
     UserCompositeService userCompositeService;
+    @Autowired
+    CommentCompositeService commentCompositeService;
 
     @PostMapping
     public Result uploadPost(@RequestBody UploadPostRequest request) {
@@ -96,5 +95,14 @@ public class PostController {
     ) {
         int likeCount = likeService.countLikesByTargetId(postId, "POST");
         return Result.success(likeCount);
+    }
+    @GetMapping("/{postId}/comments")
+    public Result getCommentsByPostId(
+            @PathVariable Long postId,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        PageInfo<GetCommentResponse> comments = commentCompositeService.selectCommentsByPostId(postId, pageNum, pageSize);
+        return Result.success(comments);
     }
 }
