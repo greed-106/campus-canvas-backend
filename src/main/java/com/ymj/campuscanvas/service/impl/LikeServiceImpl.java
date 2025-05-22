@@ -2,6 +2,7 @@ package com.ymj.campuscanvas.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.ymj.campuscanvas.mapper.CommentLikeMapper;
 import com.ymj.campuscanvas.mapper.PostLikeMapper;
 import com.ymj.campuscanvas.pojo.DTO.LikeRequest;
 import com.ymj.campuscanvas.pojo.Like;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,8 +24,9 @@ import java.util.stream.Collectors;
 public class LikeServiceImpl implements LikeService {
 
     @Autowired
-    PostLikeMapper likeMapper;
-
+    PostLikeMapper postLikeMapper;
+    @Autowired
+    CommentLikeMapper commentLikeMapper;
 
     @Override
     public void handleLikeRequest(LikeRequest likeRequest) {
@@ -45,7 +49,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public void insertPostLike(Like like) {
         try {
-            likeMapper.insertPostLike(like);
+            postLikeMapper.insertPostLike(like);
         } catch (DuplicateKeyException e) {
             throw new IllegalArgumentException("Cannot like the same post multiple times");
         } catch (Exception e) {
@@ -56,7 +60,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public void deletePostLike(Like like) {
-        int affectedRows = likeMapper.deleteLike(like);
+        int affectedRows = postLikeMapper.deleteLike(like);
         if (affectedRows == 0) {
             throw new IllegalArgumentException("Unable to delete like, like not found");
         }
@@ -70,7 +74,7 @@ public class LikeServiceImpl implements LikeService {
 
         Like.LikeType likeType = Like.LikeType.valueOf(type.toUpperCase());
         if(likeType == Like.LikeType.POST) {
-            return likeMapper.countPostLikesByPostId(targetId);
+            return postLikeMapper.countPostLikesByPostId(targetId);
         } else {
             throw new IllegalArgumentException("Comment like count is not supported yet");
         }
@@ -91,7 +95,7 @@ public class LikeServiceImpl implements LikeService {
         // 分页
         String oderBy = SortValidator.validateSort(Like.class, "created_time", "desc");
         PageHelper.startPage(pageNum, pageSize, oderBy);
-        Page<Like> likes = (Page<Like>) likeMapper.getLikesByUserId(userId);
+        Page<Like> likes = (Page<Like>) postLikeMapper.getLikesByUserId(userId);
 
         return convertLikesToIdsWithPage(likes, Like::getTargetId);
     }
@@ -101,8 +105,50 @@ public class LikeServiceImpl implements LikeService {
         // 分页
         String oderBy = SortValidator.validateSort(Like.class, "created_time", "desc");
         PageHelper.startPage(pageNum, pageSize, oderBy);
-        Page<Like> likes = (Page<Like>) likeMapper.getLikesByPostId(postId);
+        Page<Like> likes = (Page<Like>) postLikeMapper.getLikesByPostId(postId);
 
         return convertLikesToIdsWithPage(likes, Like::getUserId);
+    }
+
+    @Override
+    public Map<Long, Integer> getLikeCountsByPostIds(List<Long> postIds) {
+        if (postIds == null || postIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<Integer> likeCounts = postLikeMapper.getLikeCountsByPostIds(postIds);
+        if (likeCounts.size() != postIds.size()) {
+            throw new RuntimeException("Like counts size does not match post IDs size");
+        }
+
+        // 对postIds进行从小到大的排序
+        List<Long> sortedPostIds = postIds.stream()
+                .sorted()
+                .collect(Collectors.toList());
+        // 构建postIds到likeCounts的映射
+        Map<Long, Integer> postIdToLikeCountMap = sortedPostIds.stream()
+                .collect(Collectors.toMap(Function.identity(), postId -> likeCounts.get(postIds.indexOf(postId))));
+        return postIdToLikeCountMap;
+    }
+
+    @Override
+    public Map<Long, Integer> getLikeCountsByCommentIds(List<Long> commentIds) {
+        if (commentIds == null || commentIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<Integer> likeCounts = commentLikeMapper.getLikeCountsByCommentIds(commentIds);
+        if (likeCounts.size() != commentIds.size()) {
+            throw new RuntimeException("Like counts size does not match comment IDs size");
+        }
+
+        // 对commentIds进行从小到大的排序
+        List<Long> sortedCommentIds = commentIds.stream()
+                .sorted()
+                .collect(Collectors.toList());
+        // 构建commentIds到likeCounts的映射
+        Map<Long, Integer> commentIdToLikeCountMap = sortedCommentIds.stream()
+                .collect(Collectors.toMap(Function.identity(), commentId -> likeCounts.get(commentIds.indexOf(commentId))));
+        return commentIdToLikeCountMap;
     }
 }

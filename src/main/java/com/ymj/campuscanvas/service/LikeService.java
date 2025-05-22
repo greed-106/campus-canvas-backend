@@ -4,6 +4,9 @@ import com.github.pagehelper.Page;
 import com.ymj.campuscanvas.pojo.DTO.LikeRequest;
 import com.ymj.campuscanvas.pojo.Like;
 
+import java.util.List;
+import java.util.Map;
+
 public interface LikeService {
     // TODO: 有待完善评论部分
     void handleLikeRequest(LikeRequest likeRequest);
@@ -13,4 +16,6 @@ public interface LikeService {
     int countLikesByTargetId(Long targetId, String type);
     Page<Long> getLikedPostIdsByUserId(Long userId, int pageNum, int pageSize);
     Page<Long> getLikedUserIdsByPostId(Long postId, int pageNum, int pageSize);
+    Map<Long, Integer> getLikeCountsByPostIds(List<Long> postIds);
+    Map<Long, Integer> getLikeCountsByCommentIds(List<Long> commentIds);
 }
