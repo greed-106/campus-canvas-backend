@@ -1,5 +1,7 @@
 package com.ymj.campuscanvas.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.ymj.campuscanvas.mapper.CommentMapper;
 import com.ymj.campuscanvas.pojo.Comment;
 import com.ymj.campuscanvas.pojo.DTO.UploadCommentRequest;
@@ -33,5 +35,18 @@ public class CommentServiceImpl implements CommentService {
         if (affectedRows == 0) {
             throw new IllegalArgumentException("Failed to delete comment: comment does not exist");
         }
+    }
+
+    @Override
+    public Page<Comment> getCommentsByPostId(Long postId, Integer pageNum, Integer pageSize) {
+        if (postId == null || pageNum == null || pageSize == null) {
+            throw new IllegalArgumentException("Post ID, page number, and page size must not be null");
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        Page<Comment> comments = (Page<Comment>) commentMapper.selectCommentsByPostId(postId);
+        if(comments == null || comments.isEmpty()) {
+            return new Page<>();
+        }
+        return comments;
     }
 }
