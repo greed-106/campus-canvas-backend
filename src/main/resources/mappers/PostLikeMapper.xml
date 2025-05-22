@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ymj.campuscanvas.mapper.PostLikeMapper">
+
+    <!-- 高性能版：保证返回所有postId的计数（包括0），且顺序一致 -->
+    <select id="getLikeCountsByPostIds" resultType="java.lang.Integer">
+        SELECT
+        IFNULL(l.like_count, 0) AS count
+        FROM
+        <!-- 动态构建临时表（修复参数绑定问题） -->
+        (
+        <foreach item="postId" collection="postIds" separator=" UNION ALL ">
+            SELECT #{postId} AS id FROM DUAL
+        </foreach>
+        ) AS temp
+        LEFT JOIN
+        <!-- 只查询一次点赞表（利用索引） -->
+        (
+        SELECT
+        target_id,
+        COUNT(*) AS like_count
+        FROM
+        `like_post`
+        WHERE
+        target_id IN
+        <foreach item="item" collection="postIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY
+        target_id
+        ) AS l ON temp.id = l.target_id
+        <!-- 严格按输入顺序排序 -->
+        ORDER BY
+        FIELD(temp.id,
+        <foreach item="item" collection="postIds" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+</mapper>

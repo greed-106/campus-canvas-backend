@@ -20,4 +20,5 @@ public interface PostLikeMapper {
     List<Like> getLikesByUserId(Long userId);
     @Select("SELECT * FROM `like_post` WHERE target_id = #{postId}")
     List<Like> getLikesByPostId(Long postId);
+    List<Integer> getLikeCountsByPostIds(List<Long> postIds);
 }

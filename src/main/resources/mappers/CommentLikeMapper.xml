@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ymj.campuscanvas.mapper.CommentLikeMapper">
+
+    <!-- 优化后的 LEFT JOIN 方案（已修复参数绑定问题） -->
+    <select id="getLikeCountsByCommentIds" resultType="java.lang.Integer">
+        SELECT
+        IFNULL(l.like_count, 0) AS count
+        FROM
+        <!-- 动态生成临时表 -->
+        (
+        <foreach item="commentId" collection="commentIds" separator=" UNION ALL ">
+            SELECT #{commentId} AS id FROM DUAL
+        </foreach>
+        ) AS temp
+        LEFT JOIN
+        <!-- 关联点赞统计子查询 -->
+        (
+        SELECT
+        target_id,
+        COUNT(*) AS like_count
+        FROM
+        `like_comment`
+        WHERE
+        target_id IN
+        <foreach item="item" collection="commentIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY
+        target_id
+        ) AS l ON temp.id = l.target_id
+        <!-- 按输入顺序排序（MySQL语法） -->
+        ORDER BY
+        FIELD(temp.id,
+        <foreach item="item" collection="commentIds" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+</mapper>
