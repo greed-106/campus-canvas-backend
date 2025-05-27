@@ -20,4 +20,5 @@ public class GetPostResponse {
     private List<String> imageUrls;
     private LocalDateTime createdTime;
     private int viewCount;
+    private int likeCount;
 }

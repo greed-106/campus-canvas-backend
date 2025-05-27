@@ -30,14 +30,17 @@ public class PostCompositeServiceImpl implements PostCompositeService {
     @Autowired
     UserService userService;
 
-    private Page<GetPostResponse> appendUserBriefsToPosts(Page<Post> posts) {
+    private Page<GetPostResponse> appendUserBriefsAndLikeCountsToPosts(Page<Post> posts) {
         if (posts == null || posts.isEmpty()) {
             return new Page<>();
         }
         List<Long> userIds = posts.stream().map(Post::getUserId).collect(Collectors.toList());
         Map<Long, UserBriefResponse> userBriefs = userService.getUserBriefProfilesByIds(userIds);
 
-        return postAssembler.assemblePagePostsWithUserBriefs(posts, userBriefs);
+        List<Long> postIds = posts.stream().map(Post::getId).collect(Collectors.toList());
+        Map<Long, Integer> likeCounts = likeService.getLikeCountsByPostIds(postIds);
+
+        return postAssembler.assemblePagePostsWithUserBriefsAndLikeCounts(posts, userBriefs, likeCounts);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class PostCompositeServiceImpl implements PostCompositeService {
 
         Page<Post> posts = topicService.selectPostsByTagId(tagId, pageNum, pageSize, sortBy, sortOrder);
 
-        Page<GetPostResponse> responsePage = appendUserBriefsToPosts(posts);
+        Page<GetPostResponse> responsePage = appendUserBriefsAndLikeCountsToPosts(posts);
 
         return new PageInfo<>(responsePage);
     }
@@ -54,7 +57,7 @@ public class PostCompositeServiceImpl implements PostCompositeService {
     public PageInfo<GetPostResponse> selectPostsByKeyword(String keyword, int pageNum, int pageSize, String sortBy, String sortOrder) {
         Page<Post> posts = postService.selectPostsByKeyword(keyword, pageNum, pageSize, sortBy, sortOrder);
 
-        Page<GetPostResponse> responsePage = appendUserBriefsToPosts(posts);
+        Page<GetPostResponse> responsePage = appendUserBriefsAndLikeCountsToPosts(posts);
 
         return new PageInfo<>(responsePage);
     }
@@ -63,7 +66,7 @@ public class PostCompositeServiceImpl implements PostCompositeService {
     public PageInfo<GetPostResponse> selectPostsByUserId(Long userId, int pageNum, int pageSize, String sortBy, String sortOrder) {
         Page<Post> posts = postService.selectPostsByUserId(userId, pageNum, pageSize, sortBy, sortOrder);
 
-        Page<GetPostResponse> responsePage = appendUserBriefsToPosts(posts);
+        Page<GetPostResponse> responsePage = appendUserBriefsAndLikeCountsToPosts(posts);
 
         return new PageInfo<>(responsePage);
     }
@@ -72,7 +75,7 @@ public class PostCompositeServiceImpl implements PostCompositeService {
     public PageInfo<GetPostResponse> selectHotPosts(int pageNum, int pageSize, int days) {
         Page<Post> posts = postService.selectHotPosts(pageNum, pageSize, days);
 
-        Page<GetPostResponse> responsePage = appendUserBriefsToPosts(posts);
+        Page<GetPostResponse> responsePage = appendUserBriefsAndLikeCountsToPosts(posts);
 
         return new PageInfo<>(responsePage);
     }
@@ -96,7 +99,7 @@ public class PostCompositeServiceImpl implements PostCompositeService {
         posts.setTotal(postIds.getTotal());
         posts.addAll(new ArrayList<>(postService.selectPostsByPostIds(postIds).values()));
 
-        Page<GetPostResponse> responses = appendUserBriefsToPosts(posts);
+        Page<GetPostResponse> responses = appendUserBriefsAndLikeCountsToPosts(posts);
 
         return new PageInfo<>(responses);
     }

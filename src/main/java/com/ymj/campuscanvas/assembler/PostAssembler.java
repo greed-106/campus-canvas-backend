@@ -33,7 +33,7 @@ public class PostAssembler {
         return response;
     }
 
-    public Page<GetPostResponse> assemblePagePostsWithUserBriefs(Page<Post> posts, Map<Long, UserBriefResponse> userBriefs) {
+    public Page<GetPostResponse> assemblePagePostsWithUserBriefsAndLikeCounts(Page<Post> posts, Map<Long, UserBriefResponse> userBriefs, Map<Long, Integer> likeConuts) {
         if (posts == null || userBriefs == null) {
             return new Page<>();
         }
@@ -43,6 +43,12 @@ public class PostAssembler {
             if (profile != null) {
                 response.setUsername(profile.getUsername());
                 response.setAvatarUrl(profile.getAvatarUrl());
+            }
+            Integer likeCount = likeConuts.get(response.getId());
+            if (likeCount != null) {
+                response.setLikeCount(likeCount);
+            } else {
+                response.setLikeCount(0);
             }
         }
         return responsePage;
