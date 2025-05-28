@@ -3,7 +3,6 @@ server:
 
 mybatis:
   mapper-locations: classpath:mappers/*xml  # 指定 MyBatis 的 Mapper XML 文件所在路径为 yaml 文件所在路径下的 mappers 文件夹
-  type-aliases-package: com.ymj.addresslist.mybatis.entity  # 指定 MyBatis 的类型别名所在的包路径
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
@@ -12,7 +11,7 @@ spring:
   #database
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://vcl.mingjia.tech:3307/campus-canvas
+    url: jdbc:mysql://100.65.111.80:3307/campus-canvas
     username: ymj
     password: ymj20040312
     hikari:
@@ -25,8 +24,8 @@ spring:
   mail:
     host: smtp.qq.com
     port: 587
-    username: 1062415694@qq.com
-    password: mxteibwfeatebejf
+    username: 不要时间我的qq号了
+    password: 不要时间我的密码了
     properties:
       mail:
         smtp:
@@ -35,7 +34,7 @@ spring:
             enable: true
   #Redis
   redis:
-    host: vcl.mingjia.tech
+    host: 100.65.111.80
     port: 6379
     password:
     database: 0
