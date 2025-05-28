@@ -4,10 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.ymj.campuscanvas.assembler.UserAssembler;
 import com.ymj.campuscanvas.pojo.DTO.UserBriefResponse;
-import com.ymj.campuscanvas.service.LikeService;
-import com.ymj.campuscanvas.service.PostService;
-import com.ymj.campuscanvas.service.UserCompositeService;
-import com.ymj.campuscanvas.service.UserService;
+import com.ymj.campuscanvas.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,18 +20,32 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     LikeService likeService;
     @Autowired
     UserAssembler userAssembler;
+    @Autowired
+    FollowService followService;
+
+    private Page<UserBriefResponse> appendUserBriefsToUserIds(Page<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return new Page<>();
+        }
+        Map<Long, UserBriefResponse> userBriefsMap = userService.getUserBriefProfilesByIds(userIds);
+        return userAssembler.assembleUserBriefResponseWithPage(userIds, userBriefsMap);
+    }
 
     @Override
     public PageInfo<UserBriefResponse> selectUserBriefsByLikedPostId(Long postId, int pageNum, int pageSize) {
         Page<Long> userIds = likeService.getLikedUserIdsByPostId(postId, pageNum, pageSize);
-        if (userIds == null || userIds.isEmpty()) {
-            return new PageInfo<>();
-        }
+        return new PageInfo<>(appendUserBriefsToUserIds(userIds));
+    }
 
-        Map<Long, UserBriefResponse> userBriefsMap = userService.getUserBriefProfilesByIds(userIds);
+    @Override
+    public PageInfo<UserBriefResponse> selectFollowerBriefsByUserId(Long userId, int pageNum, int pageSize) {
+        Page<Long> followerIds = followService.getFollowerList(userId, pageNum, pageSize);
+        return new PageInfo<>(appendUserBriefsToUserIds(followerIds));
+    }
 
-        Page<UserBriefResponse> userBriefs = userAssembler.assembleUserBriefResponseWithPage(userIds, userBriefsMap);
-
-        return new PageInfo<>(userBriefs);
+    @Override
+    public PageInfo<UserBriefResponse> selectFollowingBriefsByUserId(Long userId, int pageNum, int pageSize) {
+        Page<Long> followingIds = followService.getFollowingList(userId, pageNum, pageSize);
+        return new PageInfo<>(appendUserBriefsToUserIds(followingIds));
     }
 }

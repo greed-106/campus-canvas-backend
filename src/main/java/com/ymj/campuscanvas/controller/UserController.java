@@ -5,13 +5,11 @@ import com.ymj.campuscanvas.pojo.DTO.*;
 import com.ymj.campuscanvas.pojo.Post;
 import com.ymj.campuscanvas.pojo.Result;
 import com.ymj.campuscanvas.pojo.User;
-import com.ymj.campuscanvas.service.PostCompositeService;
-import com.ymj.campuscanvas.service.PostService;
-import com.ymj.campuscanvas.service.UserService;
-import com.ymj.campuscanvas.service.VerificationCodeService;
+import com.ymj.campuscanvas.service.*;
 import com.ymj.campuscanvas.utils.RedisKeys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,7 +24,9 @@ public class UserController {
     @Autowired
     PostCompositeService postCompositeService;
     @Autowired
-    PostService postService;
+    UserCompositeService userCompositeService;
+    @Autowired
+    FollowService followService;
 
     @PostMapping
     public Result register(@RequestBody RegisterRequest request) {
@@ -39,7 +39,6 @@ public class UserController {
         log.info(profile.toString());
         return Result.success(profile);
     }
-
 
     @GetMapping("/check/username")
     public Result checkUsername(@RequestParam String username) {
@@ -87,4 +86,33 @@ public class UserController {
         return Result.success(posts);
     }
 
+    // 获取用户关注列表
+    @GetMapping("/{userId}/followings")
+    public Result getFollowingList(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        PageInfo<UserBriefResponse> followingList = userCompositeService.selectFollowingBriefsByUserId(userId, pageNum, pageSize);
+        return Result.success(followingList);
+    }
+
+    // 获取用户粉丝列表
+    @GetMapping("/{userId}/followers")
+    public Result getFollowerList(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        PageInfo<UserBriefResponse> followerList = userCompositeService.selectFollowerBriefsByUserId(userId, pageNum, pageSize);
+        return Result.success(followerList);
+    }
+
+    @GetMapping("/{userId}/follow-counts")
+    public Result getFollowCounts(
+            @PathVariable Long userId
+    ) {
+        GetFollowCountsResponse response = followService.getFollowCounts(userId);
+        return Result.success(response);
+    }
 }

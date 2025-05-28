@@ -1,5 +1,6 @@
 package com.ymj.campuscanvas.pojo;
 
+import com.ymj.campuscanvas.annotation.Sortable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,6 @@ public class Follow {
     private Long followerId;
     // 被关注者
     private Long followeeId;
+    @Sortable
     private LocalDateTime createdTime;
 }
