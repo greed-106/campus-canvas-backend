@@ -115,4 +115,14 @@ public class UserController {
         GetFollowCountsResponse response = followService.getFollowCounts(userId);
         return Result.success(response);
     }
+
+    @GetMapping("/{userId}/favorite-posts")
+    public Result getUserFavoritePosts(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        PageInfo<GetPostResponse> posts = postCompositeService.selectPostsByUserFavorite(userId, pageNum, pageSize);
+        return Result.success(posts);
+    }
 }

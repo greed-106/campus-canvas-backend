@@ -12,5 +12,5 @@ public interface PostCompositeService {
     PageInfo<GetPostResponse> selectHotPosts(int pageNum, int pageSize, int days);
     GetPostResponse selectPostByPostId(Long postId);
     PageInfo<GetPostResponse> selectPostsByUserLiked(Long userId, int pageNum, int pageSize);
-
+    PageInfo<GetPostResponse> selectPostsByUserFavorite(Long userId, int pageNum, int pageSize);
 }

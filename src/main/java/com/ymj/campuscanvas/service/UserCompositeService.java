@@ -13,4 +13,7 @@ public interface UserCompositeService {
     PageInfo<UserBriefResponse> selectFollowingBriefsByUserId(
             Long userId, int pageNum, int pageSize
     );
+    PageInfo<UserBriefResponse> selectUserBriefsByFavoritePostId(
+            Long postId, int pageNum, int pageSize
+    );
 }

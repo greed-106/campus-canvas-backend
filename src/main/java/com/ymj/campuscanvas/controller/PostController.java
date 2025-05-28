@@ -89,6 +89,15 @@ public class PostController {
         PageInfo<UserBriefResponse> userBriefs = userCompositeService.selectUserBriefsByLikedPostId(postId, pageNum, pageSize);
         return Result.success(userBriefs);
     }
+    @GetMapping("/{postId}/favorited-users")
+    public Result getUserBriefsByFavoritedPostId(
+            @PathVariable Long postId,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        PageInfo<UserBriefResponse> userBriefs = userCompositeService.selectUserBriefsByFavoritePostId(postId, pageNum, pageSize);
+        return Result.success(userBriefs);
+    }
     @GetMapping("/{postId}/liked-count")
     public Result getPostLikeCounts(
             @PathVariable Long postId

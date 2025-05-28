@@ -13,7 +13,7 @@ import java.util.Map;
 @Service
 public class UserCompositeServiceImpl implements UserCompositeService {
     @Autowired
-    PostService postService;
+    FavoriteService favoriteService;
     @Autowired
     UserService userService;
     @Autowired
@@ -47,5 +47,11 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     public PageInfo<UserBriefResponse> selectFollowingBriefsByUserId(Long userId, int pageNum, int pageSize) {
         Page<Long> followingIds = followService.getFollowingList(userId, pageNum, pageSize);
         return new PageInfo<>(appendUserBriefsToUserIds(followingIds));
+    }
+
+    @Override
+    public PageInfo<UserBriefResponse> selectUserBriefsByFavoritePostId(Long postId, int pageNum, int pageSize) {
+        Page<Long> userIds = favoriteService.getFavoriteUserIdsByPostId(postId, pageNum, pageSize);
+        return new PageInfo<>(appendUserBriefsToUserIds(userIds));
     }
 }

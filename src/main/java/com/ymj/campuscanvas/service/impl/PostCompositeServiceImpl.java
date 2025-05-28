@@ -20,7 +20,7 @@ public class PostCompositeServiceImpl implements PostCompositeService {
     @Autowired
     PostService postService;
     @Autowired
-    TagService tagService;
+    FavoriteService favoriteService;
     @Autowired
     TopicService topicService;
     @Autowired
@@ -41,6 +41,17 @@ public class PostCompositeServiceImpl implements PostCompositeService {
         Map<Long, Integer> likeCounts = likeService.getLikeCountsByPostIds(postIds);
 
         return postAssembler.assemblePagePostsWithUserBriefsAndLikeCounts(posts, userBriefs, likeCounts);
+    }
+
+    private Page<Post> getPostsByPostIdsWithPage(Page<Long> postIds) {
+        if (postIds == null || postIds.isEmpty()) {
+            return new Page<>();
+        }
+        Map<Long, Post> postsMap = postService.selectPostsByPostIds(postIds);
+        Page<Post> posts = new Page<>(1, postIds.size());
+        posts.setTotal(postIds.size());
+        posts.addAll(new ArrayList<>(postsMap.values()));
+        return posts;
     }
 
     @Override
@@ -95,9 +106,18 @@ public class PostCompositeServiceImpl implements PostCompositeService {
     public PageInfo<GetPostResponse> selectPostsByUserLiked(Long userId, int pageNum, int pageSize) {
         Page<Long> postIds = likeService.getLikedPostIdsByUserId(userId, pageNum, pageSize);
 
-        Page<Post> posts = new Page<>(postIds.getPageNum(), postIds.getPageSize());
-        posts.setTotal(postIds.getTotal());
-        posts.addAll(new ArrayList<>(postService.selectPostsByPostIds(postIds).values()));
+        Page<Post> posts = getPostsByPostIdsWithPage(postIds);
+
+        Page<GetPostResponse> responses = appendUserBriefsAndLikeCountsToPosts(posts);
+
+        return new PageInfo<>(responses);
+    }
+
+    @Override
+    public PageInfo<GetPostResponse> selectPostsByUserFavorite(Long userId, int pageNum, int pageSize) {
+        Page<Long> postIds = favoriteService.getFavoritePostIdsByUserId(userId, pageNum, pageSize);
+
+        Page<Post> posts = getPostsByPostIdsWithPage(postIds);
 
         Page<GetPostResponse> responses = appendUserBriefsAndLikeCountsToPosts(posts);
 
