@@ -20,4 +20,11 @@ public interface UserService {
     Map<Long, UserBriefResponse> getUserBriefProfilesByIds(List<Long> ids);
 
     Map<Long, UserProfileResponse> getUserProfilesByIds(List<Long> ids);
+    
+    /**
+     * 更新用户状态（封禁/解封）
+     * @param userId 用户ID
+     * @param status 新状态
+     */
+    void updateUserStatus(Long userId, User.UserStatus status);
 }

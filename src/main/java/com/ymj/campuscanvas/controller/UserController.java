@@ -125,4 +125,54 @@ public class UserController {
         PageInfo<GetPostResponse> posts = postCompositeService.selectPostsByUserFavorite(userId, pageNum, pageSize);
         return Result.success(posts);
     }
+    
+    /**
+     * 更新用户状态（封禁/解封）
+     * @param request 用户状态请求
+     * @return 操作结果
+     */
+    @PutMapping("/status")
+    public Result updateUserStatus(@RequestBody UserStatusRequest request) {
+        log.info("Updating user status: userId={}, status={}, reason={}", 
+                request.getUserId(), request.getStatus(), request.getReason());
+        
+        // 验证参数
+        if (request.getUserId() == null) {
+            return Result.failure("用户ID不能为空");
+        }
+        if (request.getStatus() == null) {
+            return Result.failure("用户状态不能为空");
+        }
+        
+        userService.updateUserStatus(request.getUserId(), request.getStatus());
+        
+        String action = request.getStatus() == User.UserStatus.DISABLED ? "封禁" : "解封";
+        log.info("User {} successfully: userId={}", action, request.getUserId());
+        
+        return Result.success("用户" + action + "成功");
+    }
+    
+    /**
+     * 封禁用户（快捷接口）
+     * @param userId 用户ID
+     * @return 操作结果
+     */
+    @PutMapping("/{userId}/ban")
+    public Result banUser(@PathVariable Long userId) {
+        log.info("Banning user: userId={}", userId);
+        userService.updateUserStatus(userId, User.UserStatus.DISABLED);
+        return Result.success("用户封禁成功");
+    }
+    
+    /**
+     * 解封用户（快捷接口）
+     * @param userId 用户ID
+     * @return 操作结果
+     */
+    @PutMapping("/{userId}/unban")
+    public Result unbanUser(@PathVariable Long userId) {
+        log.info("Unbanning user: userId={}", userId);
+        userService.updateUserStatus(userId, User.UserStatus.ACTIVE);
+        return Result.success("用户解封成功");
+    }
 }

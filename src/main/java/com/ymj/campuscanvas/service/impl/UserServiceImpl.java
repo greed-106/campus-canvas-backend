@@ -157,4 +157,18 @@ public class UserServiceImpl implements UserService {
         User userByEmail = userMapper.selectUserByEmail(email);
         return userByEmail != null;
     }
+    
+    @Override
+    @CacheEvict(value = "userProfile", key = "#userId")
+    public void updateUserStatus(Long userId, User.UserStatus status) {
+        log.info("Updating user status: userId={}, status={}", userId, status);
+        
+        // 检查用户是否存在
+        checkUserIdExist(userId);
+        
+        // 更新用户状态
+        userMapper.updateUserStatus(userId, status);
+        
+        log.info("User status updated successfully: userId={}, newStatus={}", userId, status);
+    }
 }
