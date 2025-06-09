@@ -21,7 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/campus-canvas/api/auth/verification-code/email")
                 .excludePathPatterns("/campus-canvas/api/users")
                 .excludePathPatterns("/campus-canvas/api/users/check/username")
-                .excludePathPatterns("/campus-canvas/api/users/check/email");
+                .excludePathPatterns("/campus-canvas/api/users/check/email")
+                .excludePathPatterns("/campus-canvas/api/admin/login");
     }
 
 
