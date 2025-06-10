@@ -27,4 +27,11 @@ public interface UserService {
      * @param status 新状态
      */
     void updateUserStatus(Long userId, User.UserStatus status);
+    
+    /**
+     * 根据用户名搜索用户
+     * @param username 用户名
+     * @return 用户简要信息列表
+     */
+    List<UserBriefResponse> searchUsersByUsername(String username);
 }

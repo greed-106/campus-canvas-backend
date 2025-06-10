@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @CrossOrigin
@@ -174,5 +176,17 @@ public class UserController {
         log.info("Unbanning user: userId={}", userId);
         userService.updateUserStatus(userId, User.UserStatus.ACTIVE);
         return Result.success("用户解封成功");
+    }
+    
+    /**
+     * 根据用户名搜索用户
+     * @param username 用户名
+     * @return 用户简要信息列表
+     */
+    @GetMapping("/search")
+    public Result searchUsersByUsername(@RequestParam String username) {
+        log.info("Searching users by username: {}", username);
+        List<UserBriefResponse> users = userService.searchUsersByUsername(username);
+        return Result.success(users);
     }
 }

@@ -171,4 +171,21 @@ public class UserServiceImpl implements UserService {
         
         log.info("User status updated successfully: userId={}, newStatus={}", userId, status);
     }
+    
+    @Override
+    public List<UserBriefResponse> searchUsersByUsername(String username) {
+        log.info("Searching users by username: {}", username);
+        
+        List<User> users = userMapper.searchUsersByUsername(username);
+        List<UserBriefResponse> responses = users.stream()
+            .map(user -> new UserBriefResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getAvatarUrl()
+            ))
+            .collect(Collectors.toList());
+        
+        log.info("Found {} users matching username: {}", responses.size(), username);
+        return responses;
+    }
 }

@@ -21,4 +21,7 @@ public interface UserMapper {
     
     @Update("UPDATE user SET status = #{status} WHERE id = #{userId}")
     void updateUserStatus(@Param("userId") Long userId, @Param("status") User.UserStatus status);
+    
+    @Select("SELECT * FROM user WHERE username LIKE CONCAT('%', #{username}, '%') AND status = 'ACTIVE' ORDER BY username")
+    List<User> searchUsersByUsername(String username);
 }
