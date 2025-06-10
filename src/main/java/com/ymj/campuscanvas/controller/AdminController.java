@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/campus-canvas/api/admin")
 @Slf4j
+@CrossOrigin
 public class AdminController {
     
     @Autowired
