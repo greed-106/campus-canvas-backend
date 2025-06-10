@@ -34,4 +34,10 @@ public interface UserService {
      * @return 用户简要信息列表
      */
     List<UserBriefResponse> searchUsersByUsername(String username);
+    
+    /**
+     * 获取所有用户简要信息及状态
+     * @return 用户简要信息及状态列表
+     */
+    List<UserBriefWithStatusResponse> getAllUsersWithStatus();
 }

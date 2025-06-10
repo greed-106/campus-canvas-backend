@@ -188,4 +188,22 @@ public class UserServiceImpl implements UserService {
         log.info("Found {} users matching username: {}", responses.size(), username);
         return responses;
     }
+    
+    @Override
+    public List<UserBriefWithStatusResponse> getAllUsersWithStatus() {
+        log.info("Getting all users with status");
+        
+        List<User> users = userMapper.selectAllUsers();
+        List<UserBriefWithStatusResponse> responses = users.stream()
+            .map(user -> new UserBriefWithStatusResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getAvatarUrl(),
+                user.getStatus()
+            ))
+            .collect(Collectors.toList());
+        
+        log.info("Retrieved {} users with status information", responses.size());
+        return responses;
+    }
 }

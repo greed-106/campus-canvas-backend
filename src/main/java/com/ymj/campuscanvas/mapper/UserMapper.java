@@ -22,6 +22,9 @@ public interface UserMapper {
     @Update("UPDATE user SET status = #{status} WHERE id = #{userId}")
     void updateUserStatus(@Param("userId") Long userId, @Param("status") User.UserStatus status);
     
-    @Select("SELECT * FROM user WHERE username LIKE CONCAT('%', #{username}, '%') AND status = 'ACTIVE' ORDER BY username")
+    @Select("SELECT * FROM user WHERE username LIKE CONCAT('%', #{username}, '%') AND status = 'ACTIVE' ORDER BY username LIMIT 20")
     List<User> searchUsersByUsername(String username);
+    
+    @Select("SELECT * FROM user ORDER BY created_time DESC")
+    List<User> selectAllUsers();
 }

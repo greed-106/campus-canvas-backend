@@ -189,4 +189,15 @@ public class UserController {
         List<UserBriefResponse> users = userService.searchUsersByUsername(username);
         return Result.success(users);
     }
+    
+    /**
+     * 获取所有用户简要信息及状态
+     * @return 用户简要信息及状态列表
+     */
+    @GetMapping("/all")
+    public Result getAllUsersWithStatus() {
+        log.info("Getting all users with status");
+        List<UserBriefWithStatusResponse> users = userService.getAllUsersWithStatus();
+        return Result.success(users);
+    }
 }
